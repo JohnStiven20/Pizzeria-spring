@@ -20,34 +20,47 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public void delete(Cliente cliente)  {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+         if (clienteRepository.existsByEmail(cliente.getEmail())) {
+            clienteRepository.delete(cliente);
+        } else {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No existe el cliente") ;
+
+        }
     }
 
     @Override
-    public void update(Cliente cliente)  {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public Cliente update(Cliente cliente)  {
+        
+        if (clienteRepository.existsByEmail(cliente.getEmail())) {
+            return clienteRepository.save(cliente);
+        } else {
+            System.out.println("VIVA ESPAÑA");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No existe el cliente");
+        }
     }
 
     @Override
-    public boolean save(Cliente cliente)  {
+    public Cliente save(Cliente cliente)  {
         if (clienteRepository.existsByDni(cliente.getDni())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe el usuario");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe el cliente");
         }
 
-        clienteRepository.save(cliente);
-        return true;
+        return clienteRepository.save(cliente);
     }
 
     @Override
     public Cliente getClienteByEmail(String gmail)  {
+
         Optional<Cliente> clienteOptional = clienteRepository.findByEmail(gmail);
 
         if (clienteOptional.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "No se ha encontrado el cliente");
         }
         return clienteOptional.get();
+    }
+
+    public List<Cliente> getAllCustormesByNombre(String nombre){
+        return clienteRepository.findByNombreContainingIgnoreCase(nombre);
     }
 
     @Override

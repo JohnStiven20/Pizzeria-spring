@@ -8,12 +8,14 @@ public interface ClienteService {
 
     void delete(Cliente cliente);
 
-    void update(Cliente cliente) ;
+    Cliente update(Cliente cliente) ;
 
-    boolean save(Cliente cliente) ;
+    Cliente save(Cliente cliente) ;
 
     Cliente getClienteByEmail(String gmail) ;
 
     List<Cliente> getAllCustomers();
+
+    List<Cliente> getAllCustormesByNombre(String nombre);
     
 }
