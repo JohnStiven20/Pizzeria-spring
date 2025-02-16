@@ -4,6 +4,7 @@ package com.example.spring.pizzeria.model;
 import java.util.List;
 
 import com.example.spring.pizzeria.Enums.Size;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @DiscriminatorValue(value = "Bebida")
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Bebida extends Producto {
 
 

@@ -1,6 +1,10 @@
 package com.example.spring.pizzeria.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,10 +32,12 @@ public class Ingrediente {
     private String nombre;
 
     @ManyToMany(mappedBy = "ingredientes", fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Producto> listaProductos;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(name = "ingrediente_alergeno", joinColumns = @JoinColumn(name = "ingrediente_id"), inverseJoinColumns = @JoinColumn(name = "alergeno_id"))
-    private List<Alergeno> alergenos;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Alergeno> alergenos = new ArrayList<>();
 
 }

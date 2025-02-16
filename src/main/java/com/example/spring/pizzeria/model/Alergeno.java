@@ -3,8 +3,12 @@ package com.example.spring.pizzeria.model;
 
 import java.util.List;
 
-import io.micrometer.common.lang.NonNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,11 +28,12 @@ public class Alergeno {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
-    @NonNull
     private String nombre;
 
-    @ManyToMany(mappedBy="alergenos")
-    @ToString.Exclude 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ManyToMany(mappedBy="alergenos", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonIgnore
     @EqualsAndHashCode.Exclude
     private List<Ingrediente> ingredientes;
 

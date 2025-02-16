@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.spring.pizzeria.Interfaces.Pagable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -35,7 +36,8 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
-    private Date fecha;
+    private Date date
+    ;
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
     @OneToMany(mappedBy = "pedido", cascade = {CascadeType.ALL, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
@@ -44,6 +46,7 @@ public class Pedido {
     
     @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "cliente_id", nullable = true)
+    @JsonIgnore
     private Cliente cliente;
     @OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "pagable_id")

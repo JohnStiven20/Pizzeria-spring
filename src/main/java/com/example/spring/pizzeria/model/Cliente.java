@@ -2,6 +2,8 @@ package com.example.spring.pizzeria.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +36,8 @@ public class Cliente  {
     private Boolean admin;
     private String direccion;
     private String apellidos;
-    
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @OneToMany(mappedBy="cliente", cascade={CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=false) 
     private List<Pedido> listaPedidos;
 

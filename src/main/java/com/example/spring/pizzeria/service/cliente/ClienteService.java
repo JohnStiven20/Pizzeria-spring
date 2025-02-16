@@ -1,4 +1,4 @@
-package com.example.spring.pizzeria.service;
+package com.example.spring.pizzeria.service.cliente;
 
 import java.util.List;
 

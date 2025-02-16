@@ -3,6 +3,9 @@ package com.example.spring.pizzeria.model;
 import java.util.List;
 
 import com.example.spring.pizzeria.Enums.Size;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorColumn;
@@ -27,7 +30,13 @@ import lombok.NoArgsConstructor;
 @DiscriminatorColumn(name="producto_tipo",  discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Producto {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "tipo")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Pizza.class, name = "Pizza"),
+    @JsonSubTypes.Type(value = Bebida.class, name = "Bebida"),
+    @JsonSubTypes.Type(value = Pasta.class, name = "Pasta")
+})
+public abstract class Producto {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -37,6 +46,7 @@ public class Producto {
     @Enumerated(EnumType.STRING)
     private Size size;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.EAGER)
     private List<Ingrediente> ingredientes;
     
