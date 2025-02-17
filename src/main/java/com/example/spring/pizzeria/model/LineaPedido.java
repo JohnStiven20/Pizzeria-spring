@@ -1,5 +1,7 @@
 package com.example.spring.pizzeria.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,5 +29,6 @@ public class LineaPedido {
     private Producto producto;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "pedido_id", nullable = true)
+    @JsonIgnore
     private Pedido pedido;
 }

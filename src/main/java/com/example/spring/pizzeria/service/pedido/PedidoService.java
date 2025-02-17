@@ -7,6 +7,7 @@ import com.example.spring.pizzeria.Interfaces.Pagable;
 import com.example.spring.pizzeria.model.Cliente;
 import com.example.spring.pizzeria.model.Pedido;
 import com.example.spring.pizzeria.model.Producto;
+import com.example.spring.pizzeria.model.Pedido.EstadoPedido;
 
 public interface PedidoService {
 
@@ -18,7 +19,7 @@ public interface PedidoService {
 
     List<Pedido> findAll();
 
-    Optional<List<Pedido>> findByEstadoAndCliente(String estado, Cliente cliente);
+    Optional<List<Pedido>> findByEstadoAndCliente(EstadoPedido estado, Cliente cliente);
 
     Pedido addCarrito(Cliente pedido, Producto producto, int cantidad);
 

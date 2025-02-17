@@ -57,4 +57,9 @@ public class ClienteServiceImpl implements ClienteService {
     public List<Cliente> getAllCustomers() {
         return clienteRepository.findAll();
     }
+
+    @Override
+    public Cliente findClienteById(int id) {
+        return clienteRepository.findById(id);
+    }
 }

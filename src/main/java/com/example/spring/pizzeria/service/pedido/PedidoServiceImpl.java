@@ -1,5 +1,6 @@
 package com.example.spring.pizzeria.service.pedido;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +15,11 @@ import com.example.spring.pizzeria.model.LineaPedido;
 import com.example.spring.pizzeria.model.Pedido;
 import com.example.spring.pizzeria.model.Producto;
 import com.example.spring.pizzeria.model.Pedido.EstadoPedido;
+import com.example.spring.pizzeria.repository.ClienteRepository;
 import com.example.spring.pizzeria.repository.LineaPedidoRepository;
 import com.example.spring.pizzeria.repository.PedidoRepository;
+import com.example.spring.pizzeria.repository.ProductoRepository;
+import com.example.spring.pizzeria.service.cliente.ClienteService;
 import com.example.spring.pizzeria.service.producto.ProductoService;
 
 @Service
@@ -27,6 +31,10 @@ public class PedidoServiceImpl implements PedidoService {
     private LineaPedidoRepository lineaPedidoRepository;
     @Autowired
     private ProductoService productoService;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private ClienteService clienteService;
 
     @Override
     public void delete(Pedido pedido) {
@@ -40,7 +48,10 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido save(Pedido pedido) {
-        return pedidoRepository.save(pedido);
+
+
+        pedidoRepository.save(pedido);
+        return pedido;
     }
 
     LineaPedido saveLineaPedido(LineaPedido lineaPedido) {
@@ -55,35 +66,39 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public Optional<List<Pedido>> findByEstadoAndCliente(String estado, Cliente cliente) {
+    public Optional<List<Pedido>> findByEstadoAndCliente(EstadoPedido estado, Cliente cliente) {
         return pedidoRepository.findByEstadoAndCliente(estado, cliente);
     }
 
     @Override
     public Pedido addCarrito(Cliente cliente, Producto producto, int cantidad) {
 
-        int cantidadPedidos = pedidoRepository.findByEstadoAndCliente("PEDIENTE", cliente).get().size();
+        Optional<List<Pedido>> pedidosOptional = pedidoRepository.findByEstadoAndCliente(EstadoPedido.PEDIENTE, cliente);
 
-        if (cantidadPedidos <= 1) {
+        int cantidadPedidos = pedidosOptional.map(List::size).orElse(0);
+        
+        if (cantidadPedidos >= 1) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "No se puede tener más de un pedido pendiente");
         }
 
+        Cliente clienteConContexto = clienteService.update(cliente);
+
         Pedido pedido = pedidoRepository
-                .findByEstadoAndCliente("PEDIENTE", cliente).get().stream()
+                .findByEstadoAndCliente(EstadoPedido.PEDIENTE, clienteConContexto).get().stream()
                 .findFirst()
-                .orElse(new Pedido(0, new Date(), EstadoPedido.PEDIENTE, null, cliente, null));
+                .orElse(new Pedido(0, new Date(), EstadoPedido.PEDIENTE, new ArrayList<>(), clienteConContexto, null));
 
         Pedido pedidoBaseDatos = pedidoRepository.save(pedido);
         LineaPedido lineaPedido = saveLineaPedido(new LineaPedido(0, cantidad, producto, pedidoBaseDatos));
         pedidoBaseDatos.getLineaPedidos().add(lineaPedido);
         Pedido pedidoGuardado = pedidoRepository.save(pedidoBaseDatos);
         return pedidoGuardado;
-    }
+    } 
 
     @Override
     public Pedido finalizaPedido(Cliente cliente, Pagable pago) {
 
-        Pedido pedido = pedidoRepository.findByEstadoAndCliente("PENDIENTE", cliente)
+        Pedido pedido = pedidoRepository.findByEstadoAndCliente(EstadoPedido.PEDIENTE, cliente)
                 .flatMap(pedidos -> pedidos.stream().findFirst())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "No hay pedidos pendientes para este cliente"));
@@ -105,7 +120,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido cancelarPedido(Cliente cliente) {
-        Pedido pedido = pedidoRepository.findByEstadoAndCliente("PENDIENTE", cliente)
+        Pedido pedido = pedidoRepository.findByEstadoAndCliente(EstadoPedido.PEDIENTE, cliente)
                 .flatMap(pedidos -> pedidos.stream().findFirst())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "No hay pedidos pendientes para este cliente"));

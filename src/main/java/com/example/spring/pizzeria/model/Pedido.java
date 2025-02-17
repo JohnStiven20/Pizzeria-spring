@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.spring.pizzeria.Interfaces.Pagable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -39,6 +40,7 @@ public class Pedido {
     private Date date
     ;
     @Enumerated(EnumType.STRING)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private EstadoPedido estado;
     @OneToMany(mappedBy = "pedido", cascade = {CascadeType.ALL, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     private List<LineaPedido> lineaPedidos;

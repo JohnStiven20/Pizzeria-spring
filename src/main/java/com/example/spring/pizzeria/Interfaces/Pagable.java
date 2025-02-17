@@ -1,7 +1,11 @@
 package com.example.spring.pizzeria.Interfaces;
 
 
+import com.example.spring.pizzeria.MetodosPagos.PagarEfectivo;
+import com.example.spring.pizzeria.MetodosPagos.PagarTarjeta;
 import com.example.spring.pizzeria.model.Pedido;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -16,6 +20,11 @@ import jakarta.persistence.OneToOne;
 /**
  * Pagable
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "tipo_pago")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = PagarTarjeta.class, name = "PagarTarjeta"),
+    @JsonSubTypes.Type(value = PagarEfectivo.class, name = "PagarEfectivo")
+})
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_pago", discriminatorType = DiscriminatorType.STRING)

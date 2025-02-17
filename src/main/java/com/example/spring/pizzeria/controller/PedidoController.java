@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping()
-    public Pedido save(Pedido pedido) {
+    public Pedido save(@RequestBody Pedido pedido) {
         return pedidoService.save(pedido);
     }
 
@@ -35,7 +36,7 @@ public class PedidoController {
     }
 
     @PutMapping()
-    public Pedido update(Pedido pedido) {
+    public Pedido update(@RequestBody Pedido pedido) {
         return pedidoService.update(pedido);
     }
 
@@ -44,18 +45,18 @@ public class PedidoController {
         pedidoService.delete(pedido);
     }
 
-    @GetMapping("/carrito")
-    public Pedido addCarrito(CarritoRequestDTO carritoRequestDTO) {
+    @PostMapping("/carrito")
+    public Pedido addCarrito(@RequestBody CarritoRequestDTO carritoRequestDTO) {
         return pedidoService.addCarrito(carritoRequestDTO.getCliente(), carritoRequestDTO.getProducto(), carritoRequestDTO.getCantidad());
     }
 
     @PutMapping("/finalizar")
-    public Pedido finalizaPedido(FinalizarPedidoRequestDTO finalizarPedidoRequestDTO) {
+    public Pedido finalizaPedido(@RequestBody FinalizarPedidoRequestDTO finalizarPedidoRequestDTO) {
         return pedidoService.finalizaPedido(finalizarPedidoRequestDTO.getCliente(), finalizarPedidoRequestDTO.getPagable());
     }
 
     @PutMapping("/cancelar")
-    public Pedido cancelarPedido(Cliente cliente) {
+    public Pedido cancelarPedido(@RequestBody Cliente cliente) {
         return pedidoService.cancelarPedido(cliente);
     }
 

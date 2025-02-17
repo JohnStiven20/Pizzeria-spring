@@ -17,5 +17,7 @@ public interface ClienteService {
     List<Cliente> getAllCustomers();
 
     List<Cliente> getAllCustormesByNombre(String nombre);
+
+    Cliente findClienteById(int id);
     
 }
